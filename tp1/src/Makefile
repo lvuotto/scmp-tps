@@ -1,14 +1,18 @@
 
 CPP = g++
-CPPFLAGS = -Wall -Wextra -Werror -pedantic -g -O3
+CPPFLAGS = -Wall -Wextra -Werror -pedantic -g -O3 -fopenmp
 BINS = heat
+BINDIR = ../bin
 
 
-all: $(BINS)
+.PHONY: all clean
 
 
 heat: heat.cc
-	$(CPP) $(CPPFLAGS) -fopenmp -o $@ $<
+	$(CPP) $(CPPFLAGS) -o $@ $<
+	mv $@ $(BINDIR)
+
+all: heat
 
 clean:
-	rm -rf $(BINS)
+	rm -f $(BINDIR)/$(BINS)

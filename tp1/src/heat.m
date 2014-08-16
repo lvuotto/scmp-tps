@@ -1,30 +1,38 @@
 
-function u = heat (D, k, h, N, f = @(x) 5*cos(50*x));
+function heat (D, dt, N, it, f = @(x) 0);
   
-  u = zeros(N, N);
-  error = 1;
-  r = k*D/h^2;
-  
-  for i = 2 : N-1
-    u(1, i) = f((i - 1)/N);
-  end
+  dx = 1.0/N;
+  vec_size = N;
+  u = zeros(1, vec_size);
+  v = zeros(1, vec_size);
   
   clf;
   hold on;
   
-  n = 1;
-  while error < 1e4 && error > 1e-6 && n <= N
-    
-    plot(1:N, u(n,:));
-    
-    for i = 2 : N - 1
-      u(n + 1, i) = r*(u(n, i + 1) + u(n, i - 1)) + (1 - 2*r)*u(n, i);
-    end
-    
-    error = max(abs(u(n + 1, :) - u(n, :)));
-    n++;
-    
+  v(1) = 10;
+  for i = 2 : vec_size - 1
+    v(i) = f(i*dx);
   end
+  v(vec_size) = -5;
+  
+  error = 1;
+  n = 1;
+  r = dt/(dx^2);
+  while error < 1e4 && error > 1e-3 && n <= it
+    plot(linspace(0, 1, vec_size), v, 'b');
+    
+    u(1) = 10;
+    for i = 2 : vec_size - 1
+      u(i) = r*(v(i + 1) + v(i - 1)) + (1 - 2*r)*v(i);
+    end
+    u(vec_size) = -5;
+    
+    error = max(abs(u - v));
+    v = u;
+    n++;
+  end
+  
+  printf("D=%f r=%f n=%d error=%f\n", D, r, n, error);
   
   hold off;
   
