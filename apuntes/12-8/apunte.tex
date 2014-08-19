@@ -1,0 +1,118 @@
+
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[scale=0.75]{geometry}
+\usepackage{charter}
+\usepackage{amsmath}
+
+\title{Sistema Complejos en Máquinas Paralelas}
+
+
+\begin{document}
+
+\maketitle
+
+
+\section{Simulación matemática}
+
+\begin{itemize}
+ \item \textbf{Problema físico}  problema real, con todos sus detalles.
+ \item \textbf{Modelo físico / fenomenológico}  relevancia + leyes de conservación y
+   principios básicos.
+ \item \textbf{Model dinámico / matemático}  descripción en fórmulas matemáticas de las
+   leyes que gobiernan el modelo físico.
+   - Estocástica: sistemas de ecuaciones estocásticas.
+   - Determinístca: sistemas de ecuaciones determinísticas. Puede ser una formulación
+     diferencial (ecuación diferencial) o una fórmula varacional (ecuación integral).
+ \item \textbf{Modelo discreto o numérico}  aproximación discreta del model matemático.
+   ¿Llegaremos? a un sistema algebraico, que se resuelven con métodos directos
+   o iterativos (Jacobi, Gauss-Seidel, sobrerelajación, gradientes conjugados,
+   métodos multigrilla y mallas anidadas).
+ \item \textbf{Computadora digital}.
+ \item \textbf{Graficación / Animación}.
+\end{itemize}
+
+
+\section{Problema}
+
+Tengo una barra de metal a la cual le aplico calor, y voy a medir la temperatura
+a lo largo de la sección media. Se produce una configuración del calor en forma
+de punta y en los extremos de la barra hay aplicada temperatura a 0ºC. Le dejo
+de aplicar calor a la barra. Quiero estudiar el enfriamiento de la barra en el
+espacio y el tiempo.
+
+Como modelo físico usaremos una barra unidimensional.
+
+En el modelo matemático, tenemos
+\begin{align}
+\frac{\partial u}{\partial t} = D\frac{\partial^2 u}{\partial x^2}
+\end{align}
+
+$u$ es la variable dependiente, $x$ y $t$ son las variables independientes. $D$
+es el coeficiente de conductividad térmica. $u = u(x, t)$, donde $x \in [0, 1]$
+describe la posición donde tomo la temperatura y $t \in [0, \infty)$ el tiempo.
+
+Las condiciones iniciales son:
+
+\[
+\begin{cases}
+  u(x, 0) &= f(x) \\[6pt]
+  u(0, t) &= 0    \\[6pt]
+  u(1, t) &= 0
+\end{cases}
+\]
+
+Tomaremos $t_n = nk$ y $x_i = ih$, $k, h$ pasos, y definiremos $u(x_i, t_n) = u^n_i$.
+De este modo, $\frac{\partial u}{\partial x} \sim \frac{\Delta u}{\Delta x}$,
+entonces, $\frac{\partial u}{\partial x} = \frac{u_{i+1} - u_i}{\Delta x}$ y
+$\frac{\partial u}{\partial t} = \frac{u^{n+1} - u^n}{\Delta t}$
+
+
+Luego,
+\begin{align*}
+  \frac{\partial u}{\partial t} &= D \frac{\partial^2 u}{\partial x^2} \\[6pt]
+    \frac{u^{n+1}_i - u^n_i}{k} &= D \frac{u^n_{i+1} - 2u^n_i + u^n_{i-1}}{h^2}
+\end{align*}
+
+Tomando $r = \frac{kD}{h^2}$,
+\begin{align*}
+  u^{n+1}_i - u^n_i &= r(u^n_{i+1} - 2u^n_i + u^n_{i-1}) \\[6pt]
+          u^{n+1}_i &= r(u^n_{i+1} + u^n_{i-1}) + (1 - 2r)u^n_i
+\end{align*}
+
+
+\subsection{Adimensionalización}
+
+Se busca que el sistema sea independientes de medidas (metros, temperatura, etc.).
+Defino
+\begin{align*}
+  u' = \frac{u}{u_0}, \quad\quad x' = \frac{x}{x_0}, \quad\quad t' = \frac{t}{t_0}.
+\end{align*}
+
+Interponemos una variable entre $u$, $x$ y $t$:
+\begin{align*}
+  \frac{\partial u}{\partial t} = \frac{\partial u}{\partial t'} \frac{\partial t'}{\partial t}
+  &= \frac{\partial u}{\partial t'} \frac{1}{t_0} \\[6pt]
+  \frac{\partial u}{\partial t} &= \frac{u_0}{t_0} \frac{\partial u'}{\partial t'} \\[6pt]
+  \frac{u_0}{t_0} \frac{\partial u'}{\partial t'} &= D \frac{u_0}{{x_0}^2} \frac{\partial^2 u'}{\partial {x'}^2} \\[6pt]
+  \frac{{x_0}^2}{D t_0} \frac{\partial u'}{\partial t'} &= \frac{\partial^2 u'}{\partial {x'}^2}
+\end{align*}
+
+Quiero $\frac{{x_0}^2}{D t_0} = 1$. Fijado $x_0$, obtenemos
+\begin{align*}
+  t_0 = \frac{{x_0}^2}{D}
+\end{align*}
+
+Reemplazando en la última ecuación,
+\begin{align*}
+  \frac{\partial u'}{\partial t'} = \frac{\partial^2 u'}{\partial {x'}^2}
+\end{align*}
+
+Se presenta el método $\alpha$ como
+\begin{align*}
+  \frac{\partial u}{\partial t} = \alpha \left[\frac{\partial^2 u}{\partial x^2}\right]^{n+1} +
+                                  (1 - \alpha) \left[\frac{\partial^2 u}{\partial x^2}\right]^n
+\end{align*}
+
+\end{document}

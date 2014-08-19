@@ -1,0 +1,104 @@
+
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[scale=0.75]{geometry}
+\usepackage{charter}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\title{Sistema Complejos en Máquinas Paralelas}
+
+
+\begin{document}
+
+\maketitle
+
+
+\section{Respecto a la clase anterior}
+
+El problema admite solución exacta para $u(x, 0) = \sin(\pi x)$ y condiciones de
+contorno $u(0, t) = u(1, t) = 0$. Dicha solución es $u(x, t) = e^{-2\pi^2 t}\sin(\pi x)$.
+
+A esta clase de problemas se los llaman " problemas mixtos de Cauchy " o " problemas
+de valores iniciales y de contorno ".
+
+
+\subsection{Método implícito}
+
+\begin{align*}
+  i = 1 &\Rightarrow -ru_0^{n+1} + (1 + 2r)u_1^{n+1} - ru_2^{n+1} = u_1^n \\
+  i = 2 &\Rightarrow -ru_1^{n+1} + (1 + 2r)u_2^{n+1} - ru_3^{n+1} = u_2^n \\
+  i = 3 &\Rightarrow -ru_2^{n+1} + (1 + 2r)u_3^{n+1} - ru_4^{n+1} = u_3^n
+\end{align*}
+\begin{align*}
+  i = 1 &\Rightarrow (1 + 2r)u_1^{n+1} - ru_2^{n+1} = u_1^n + ru_0^{n+1} &= D_1 \\
+  i = 1 &\Rightarrow (1 + 2r)u_2^{n+1} - ru_3^{n+1} = u_2^n + ru_1^{n+1} &= D_2 \\
+  i = 1 &\Rightarrow (1 + 2r)u_3^{n+1} - ru_4^{n+1} = u_3^n + ru_2^{n+1} &= D_3
+\end{align*}
+
+
+\subsection{Método explícito}
+
+\begin{align*}
+  u_i^{n+1} &= r u_{i-1}^n + (1 - 2r) u_i^n + r u_{i+1}^n \Rightarrow
+  u_i^{n+1} &= a u_{i-1}^n + b u_i^n + c u_{i+1}^n
+\end{align*}
+
+Suponiendo $b > 0$,
+\begin{align*}
+  |u_i^n{n+1}| \leq a |u_{i-1}^n| + b |u_i^n| + c |u_{i+1}^n|
+               \leq (a + b + c) \text{max}_i |u_i^n|
+               = \text{max}_i |u_i^n|
+               \leq \text{max}_i |u_i^{n-1}|
+               \leq \dots
+               \leq \text{max}_i |u_i^0|
+\end{align*}
+
+
+
+\section{Ecuaciones diferenciales ¿elípticas?}
+
+Tenemos la ecuación
+\begin{align*}
+  \frac{\partial u}{\partial t} = D \left(\frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}\right),
+\end{align*}
+donde $u = u(x, y, t), u: \Omega \times [0, T] \to \mathbb{R}$, $\Omega = [0, 1] \times [0, 1]$
+y $\partial \Omega = \Gamma$.
+
+Llamemos $\gamma = \Gamma \times [0, t]$ y $G = \Omega \times [0, t]$.
+
+La condición inicial viene dada por $u(x, y, 0) = f(x, y), x, y \in \Omega, t = 0$, y la
+condición de contorno viene dada por $u(x, y, t) = g(x, y, t), x, y \in \Omega, \forall t$
+
+
+Tomemos $h_x = h_y = h$. De este modo, para realizar la aproximación numérica con un modelo
+explícito tenemos
+\begin{align*}
+  \frac{u_{i,j}^{n+1} - u_{i,j}^n}{k} = \frac{D}{h^2} \left( (u_{i-1,j}^n - 2 u_{i,j}^n + u_{i+1,j}^n) +
+                                                             (u_{i,j-1}^n - 2 u_{i,j}^n + u_{i,j+1}^n) \right)
+\end{align*}
+
+Tomando $r = \frac{k D}{h^2}$ y reacomodando los términos, obtenemos
+\begin{align*}
+  u_{i,j}^{n+1} = (1 - 4 r) u_{}^n + r (u_{i-1,j}^n + u_{i+1,j}^n + u_{j-1,i}^n + u_{j+1,i}^n)
+\end{align*}
+
+
+\subsection{Problema}
+Resolver numéricamente la ecuación
+\begin{align*}
+  \frac{\partial u}{\partial t} = D \left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} \right)
+\end{align*}
+para $x, y \in [0, 1], t > 0$, con la condición inicial
+\begin{align*}
+  u(x, y, 0) = \sin(\pi x) \sin(\pi y)
+\end{align*}
+y las condición de frontera
+\[ \begin{cases}
+  u(0, y, t) = u(1, y, t) &= 0 \\[6pt]
+  u(x, 0, t) = u(x, 1, t) &= 0
+\end{cases} \]
+
+
+\end{document}
